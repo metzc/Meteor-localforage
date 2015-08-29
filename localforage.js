@@ -5,21 +5,16 @@ var CustomDrivers = {};
 var DriverType = {
     INDEXEDDB: 'asyncStorage',
     LOCALSTORAGE: 'localStorageWrapper',
-    WEBSQL: 'webSQLStorage'
+    WEBSQL: 'webSQLStorage',
+    SQLITE: 'cordova-sqlite-plugin'
 };
 
 var DefaultDriverOrder = [
+    DriverType.SQLITE,
     DriverType.INDEXEDDB,
     DriverType.WEBSQL,
     DriverType.LOCALSTORAGE
 ];
-
-if (Meteor.isCordova) {
-    // This is only available on cordova
-    DriverType.SQLITE = 'cordova-sqlite-plugin';
-    // Prefer SQLite on cordova
-    DefaultDriverOrder.unshift(DriverType.SQLITE);
-}
 
 var LibraryMethods = [
     'clear',
@@ -34,7 +29,7 @@ var LibraryMethods = [
 
 var DefaultConfig = {
     description: '',
-    driver: DefaultDriverOrder.slice(),
+    driver: DefaultDriverOrder,
     name: 'localforage',
     // Default DB size is _JUST UNDER_ 5MB, as it's the highest size
     // we can use without a prompt.
@@ -57,6 +52,7 @@ var driverSupport = (function(self) {
 
     var result = {};
 
+    result[DriverType.SQLITE] = Meteor.isCordova;
     result[DriverType.WEBSQL] = !!self.openDatabase;
     result[DriverType.INDEXEDDB] = !!(function() {
         // We mimic PouchDB here; just UA test for Safari (which, as of
@@ -146,9 +142,7 @@ function isLibraryDriver(driverName) {
 
 LocalForage = class LocalForage {
     constructor(options) {
-        if (Meteor.isCordova) {
-            this.SQLITE = DriverType.SQLITE;
-        }
+        this.SQLITE = DriverType.SQLITE;
         this.INDEXEDDB = DriverType.INDEXEDDB;
         this.LOCALSTORAGE = DriverType.LOCALSTORAGE;
         this.WEBSQL = DriverType.WEBSQL;
