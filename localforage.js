@@ -5,14 +5,14 @@ var CustomDrivers = {};
 var DriverType = {
     INDEXEDDB: 'asyncStorage',
     LOCALSTORAGE: 'localStorageWrapper',
-    WEBSQL: 'webSQLStorage',
-    SQLITE: 'cordova-sqlite-plugin'
+    // WEBSQL: 'webSQLStorage',
+    // SQLITE: 'cordova-sqlite-plugin'
 };
 
 var DefaultDriverOrder = [
-    DriverType.SQLITE,
+    // DriverType.SQLITE,
     DriverType.INDEXEDDB,
-    DriverType.WEBSQL,
+    // DriverType.WEBSQL,
     DriverType.LOCALSTORAGE
 ];
 
@@ -52,8 +52,8 @@ var driverSupport = (function(self) {
 
     var result = {};
 
-    result[DriverType.SQLITE] = Meteor.isCordova;
-    result[DriverType.WEBSQL] = !!self.openDatabase;
+    // result[DriverType.SQLITE] = Meteor.isCordova;
+    // result[DriverType.WEBSQL] = !!self.openDatabase;
     result[DriverType.INDEXEDDB] = !!(function() {
         // We mimic PouchDB here; just UA test for Safari (which, as of
         // iOS 8/Yosemite, doesn't properly support IndexedDB).
@@ -142,10 +142,10 @@ function isLibraryDriver(driverName) {
 
 LocalForage = class LocalForage {
     constructor(options) {
-        this.SQLITE = DriverType.SQLITE;
+        // this.SQLITE = DriverType.SQLITE;
         this.INDEXEDDB = DriverType.INDEXEDDB;
         this.LOCALSTORAGE = DriverType.LOCALSTORAGE;
-        this.WEBSQL = DriverType.WEBSQL;
+        // this.WEBSQL = DriverType.WEBSQL;
 
         this._config = extend({}, DefaultConfig, options);
         this._driverSet = null;
@@ -304,18 +304,18 @@ LocalForage = class LocalForage {
             if (isLibraryDriver(driverName)) {
                 var libraryDriver;
                 switch (driverName) {
-                    case self.SQLITE:
-                        libraryDriver = cordovaSqliteplugin;
-                        break;
+                    // case self.SQLITE:
+                    //     libraryDriver = cordovaSqliteplugin;
+                    //     break;
                     case self.INDEXEDDB:
                         libraryDriver = asyncStorage;
                         break;
                     case self.LOCALSTORAGE:
                         libraryDriver = localStorageWrapper;
                         break;
-                    case self.WEBSQL:
-                        libraryDriver = webSQLStorage;
-                        break;
+                    // case self.WEBSQL:
+                    //     libraryDriver = webSQLStorage;
+                    //     break;
                 }
                 self._extend(libraryDriver);
                 resolve();
